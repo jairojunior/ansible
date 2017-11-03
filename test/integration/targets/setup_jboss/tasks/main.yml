@@ -56,4 +56,4 @@
 
 - name: jboss-py
   pip:
-    name: "git+https://github.com/jairojunior/jboss-py.git@remove_requests_upload#egg=jboss-py"
+    name: "git+https://github.com/jairojunior/jboss-py.git@requests_upload#egg=jboss-py"

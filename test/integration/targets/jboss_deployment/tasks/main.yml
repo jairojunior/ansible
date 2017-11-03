@@ -10,6 +10,7 @@
   jboss_deployment:
     name: hawtio.war
     state: present
+    remote_src: no
     src: /opt/hawtio.war
   environment:
     JBOSS_MANAGEMENT_USER: ansible

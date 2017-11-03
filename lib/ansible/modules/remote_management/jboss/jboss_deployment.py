@@ -44,6 +44,9 @@ options:
     src:
       description: Local or remote path of deployment file.
       required: false
+    remote_src:
+      description: Whether deployment file is local or remote.
+      required: false
     server_group:
       description: Target server group. (Domain mode only)
       required: false
@@ -103,6 +106,7 @@ def read_deployment(client, name):
 def present(module, client, name, exists, current_checksum):
     src = module.params['src']
     checksum_src = module.sha1(src)
+    remote_src = module.params['remote_src']
     server_group = module.params['server_group']
 
     if exists:
@@ -112,14 +116,14 @@ def present(module, client, name, exists, current_checksum):
 
         if not module.check_mode:
             module.exit_json(changed=True,
-                             meta=client.update_deploy(name, src, server_group),
+                             meta=client.update_deploy(name, src, remote_src, server_group),
                              msg='Update deployment {0} content with {1}. Previous content checksum {2}'.format(name, checksum_src, current_checksum))
 
         module.exit_json(changed=True, diff=dict(before=current_checksum, after=checksum_src))
 
     if not module.check_mode:
         module.exit_json(changed=True,
-                         meta=client.deploy(name, src, server_group),
+                         meta=client.deploy(name, src, remote_src, server_group),
                          msg='Deployed {0}'.format(name))
 
     module.exit_json(changed=True, diff=dict(before='', after=checksum_src))
@@ -145,6 +149,7 @@ def main():
             name=dict(required=True, type='str'),
             state=dict(choices=['present', 'absent'], default='present'),
             src=dict(required=False, type='str'),
+            remote_src=dict(type='bool'),
             server_group=dict(required=False, type='str'),
         ),
         supports_check_mode=True
